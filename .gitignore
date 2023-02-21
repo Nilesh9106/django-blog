@@ -1,4 +1,4 @@
-blogproject
+env
 *.sqlite3
 .vscode
 __pycache__/
