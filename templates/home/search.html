@@ -1,0 +1,86 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Search{% endblock title %} 
+
+{% block script %} document.getElementsByName('query')[0].focus(); {% endblock script %}
+ {% block body %}
+
+<form action="{% url 'search' %}" method="get">
+  <div class="md:w-[70%] w-[90%] mx-auto flex items-center my-4">
+    <input
+      type="text"
+      name="query"
+      placeholder="Search"
+      class="placeholder:dark:text-gray-200 rounded-r-none"
+    />
+    <button
+      class="px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-green-600 rounded-r-lg hover:bg-green-500 focus:outline-none focus:ring focus:ring-green-300 focus:ring-opacity-80"
+    >
+      Search
+    </button>
+  </div>
+</form>
+<section
+  class="dark:bg-gray-900 p-5 rounded-md border dark:border-gray-800 shadow md:mx-10 mx-4 my-5 dark:text-gray-50"
+>
+  <div class="pb-4 border-b border-gray-600">
+    <h3
+      class="text-xl text-center font-semibold leading-6 dark:text-gray-100 text-gray-800"
+    >
+      Search Results
+    </h3>
+  </div>
+
+  <div class="relative mx-auto max-w-7xl">
+      {% if blogs %} 
+    <div
+      class="grid max-w-lg gap-7 first-line: mx-auto mt-12 lg:grid-cols-3 lg:max-w-none"
+    >
+      {% for post in blogs %}
+      <div
+        class="flex flex-col mb-12 p-4 rounded-md border dark:border-gray-700 shadow dark:bg-gray-800 overflow-hidden cursor-pointer"
+      >
+        <a href="{{post.slug}}">
+          <div class="flex-shrink-0">
+            <img
+              class="object-cover w-full h-48 rounded-lg"
+              src="/media/{{post.image}}"
+              alt="{{post.title}}"
+            />
+          </div>
+        </a>
+        <div class="flex flex-col justify-between flex-1">
+          <a href="{{post.slug}}"></a>
+          <div class="flex-1">
+            <a href="{{post.slug}}">
+              <div
+                class="flex pt-6 space-x-1 text-sm text-gray-500 dark:text-gray-300"
+              >
+                <time datetime="2020-03-10"> {{post.date}} </time>
+                <span aria-hidden="true"> · </span>
+                <span> 4 min read </span>
+              </div>
+            </a>
+            <a href="{{post.slug}}" class="block mt-2 space-y-6">
+              <h3
+                class="text-2xl font-semibold leading-none tracking-tighter text-neutral-600 dark:hover:text-white dark:text-gray-200"
+              >
+                {{post.title}}
+              </h3>
+              <p class="text-lg font-normal text-gray-500 dark:text-gray-300">
+                {{post.description}}
+              </p>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      
+
+    </div>
+    {% else %}
+    <div class="w-full">
+        <img src={% static 'search.png' %} class='md:w-[50%] w-[70%] md:p-10 p-3  mx-auto' alt="Search Result Not found">
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock body %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{{profile.user.username}}{% endblock title %}
+{% block style %}
+textarea{
+    @apply w-full bg-white my-2 rounded border border-gray-300 focus:border-green-500 dark:text-gray-200 dark:bg-gray-600 dark:focus:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out
+  }
+{% endblock style %}
+{% block body %}
+
+<div class="p-16 md:px-16 px-4" >
+    <div class="p-8 bg-white dark:bg-gray-800 shadow mt-20">
+        <div class="grid grid-cols-1 md:grid-cols-3">
+            <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
+                <div>
+                    <p class="font-bold text-gray-700 dark:text-gray-100 text-xl">{{blogs.count}}</p>
+                    <p class="text-gray-400 dark:text-gray-200">Blogs</p>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-700 dark:text-gray-100 text-xl">{{comments}}</p>
+                    <p class="text-gray-400 dark:text-gray-200">Subscribers</p>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-700 dark:text-gray-100 text-xl">{{subscribers}}</p>
+                    <p class="text-gray-400 dark:text-gray-200">Comments</p>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="w-48 h-48 bg-green-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-green-500">
+                    <img src="/media/{{profile.profilePic}}" alt="{{profile.user.username}}" class='rounded-full'>    
+                </div>
+            </div>
+            <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center"><button
+                    class="text-white py-2 px-4 uppercase rounded bg-green-500 hover:bg-green-600 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+                    Connect</button> <button
+                    class="text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+                    Message</button> </div>
+        </div>
+        <div class="mt-20 border-b pb-12">
+            {% if user.username == profile.user.username %}
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.as_p}}
+                <input type="submit" value="Change">
+            </form>
+            {% else %}
+            <div>
+                {% if profile.about %}
+                <h3>About</h3>
+                <p>
+                    {{profile.about}}
+                </p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+    </div>
+</div>
+{% endblock body %}

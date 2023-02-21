@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load extras %}
+{% block title %}{{blog.title}}{% endblock title %}
+
+{% block body %}
+<!-- main content  -->
+<article class="md:px-4 px-1 md:py-16 py-7 mx-auto max-w-7xl"  itemtype="http://schema.org/BlogPosting">
+    <div class="max-w-full lg:max-w-4xl md:max-w-3xl mx-auto mb-10 md:p-8 p-2 text-left dark:text-gray-50 shadow-md border rounded dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+      <img src="/media/{{ blog.image }}" class="object-cover my-2 w-full hover:opacity-90 bg-center rounded-lg aspect-video " alt="Kutty" />
+      <h1 class="my-3 text-3xl font-bold leading-tight dark:text-gray-200 text-gray-900 md:text-4xl" itemprop="headline" title="{{ blog.title }}">
+        {{ blog.title }}
+      </h1>
+      <div class="flex mb-6 space-x-2">
+        {% for tag in tags %}
+        <a class="text-gray-900 bg-white rounded-2xl px-3 py-1 badge hover:bg-gray-200" href="{% url 'tag' tag %}">{{ tag }}</a>
+        {% endfor %}
+      </div>
+      <a class="flex items-center text-gray-700" href="{% url 'profile' blog.user.user.username %}  ">
+        <div class="avatar">
+          <img src="/media/{{profile.profilePic}}" class="w-10 h-10 rounded-full" alt="{{profile.user}}" />
+        </div>
+        <div class="ml-2">
+          <p class="text-sm  font-semibold dark:text-gray-100 text-gray-800">
+            {{ blog.user }}
+          </p>
+          <p class="text-sm dark:text-gray-300 text-gray-500">{{ blog.created_at }}</p>
+        </div>
+      </a>
+    </div>
+   
+    <div
+      class="max-w-full lg:max-w-4xl dark:prose-code:text-gray-300 myclass md:max-w-3xl mx-auto box-border prose sm:prose-sm md:prose-lg lg:prose-xl md:p-8 p-2 rounded-md bg-gray-100 dark:bg-gray-900 border shadow dark:border-gray-700 dark:prose-invert ">
+      {{ body | safe }}
+    </div>
+</article>
+
+<!-- comment  -->
+<section class="pt-8 pb-16 lg:pt-16 lg:pb-24 my-5 rounded md:mx-8 mx-1 border dark:border-gray-700 shadow-md bg-white dark:bg-gray-900">
+  <div class="flex justify-between px-1 md:px-4 mx-auto max-w-screen-xl">
+    <article class="mx-auto w-full max-w-full lg:max-w-4xl md:max-w-3xl format format-sm sm:format-base lg:format-lg format-green dark:format-invert">
+    
+      <section class="not-format">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
+            Discussion 
+          </h2>
+        </div>
+        <!-- main Comment Form -->
+        <form action="{% url 'comment' %}" method="post" class="mb-6">
+          {% csrf_token %}
+          <div
+            class="py-2 px-4 mb-4 shadow rounded-lg rounded-t-lg border-2 border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <label for="comment" class="sr-only">Your comment</label>
+            <textarea id="comment" name="comment" rows="6"
+              class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+              placeholder="Write a comment..." required></textarea>
+          </div>
+
+          <input type="hidden" name="slug" value="{{blog.slug}}" />
+          <input type="hidden" name="parent" value="" />
+          <input type="hidden" name="username" value="{{blog.user.user.username}}" />
+          <button type="submit"
+            class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-green-600 rounded-lg focus:ring-4 focus:ring-green-200 dark:focus:ring-green-900 hover:bg-green-800">
+            Post comment
+          </button>
+        </form>
+        <!-- All Comments -->
+        {% for comment in comments %}
+        <article id="{{comment.id}}" class="p-5 mb-6 text-base border dark:border-gray-700 bg-gray-100 rounded-lg dark:bg-gray-900">
+          <footer class="flex justify-beween items-center mb-2">
+            <!-- user -->
+            <div class="flex items-center">
+              <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
+                <img class="mr-2 w-6 h-6 rounded-full"
+                  src="/media/{{comment.user.profilePic}}"
+                  alt="Michael Gough" />{{comment.user.user.username }}
+
+              </p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                <time pubdate datetime="2022-02-08" title="February 8th, 2022"> {{comment.created_at}} </time>
+              </p>
+            </div>
+            <!-- Delete button -->
+            {% if request.user.is_authenticated and request.user.username == comment.user.user.username %}
+            <div class="ml-auto gap-2">
+              <button onclick="deleteComment({{comment.id}})"
+                class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                type="button">
+                <i class="fa-solid fa-trash text-md    dark:text-gray-100  text-gray-600"></i>
+              </button>
+              
+            </div>
+            {% endif %}
+            <!-- Delete button end -->
+
+          </footer>
+          <p >{{ comment.commentBody }}</p>
+
+          <div class="flex items-center mt-4 space-x-4">
+            <button type="button" onclick="toggle('comment{{comment.id}}')" class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400">
+              <svg aria-hidden="true" class="mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                </path>
+              </svg>
+              Reply
+            </button>
+          </div>
+          
+        </article>
+        <!-- Reply Comment Form -->
+        <form action="{% url 'comment' %}"  id="comment{{comment.id}}" method="post" class=" hidden mb-6">
+          {% csrf_token %}
+          <div
+            class="py-2 px-4 mb-4 shadow rounded-lg rounded-t-lg border-2 border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <label for="comment" class="sr-only">Your comment</label>
+            <textarea id="comment" name="comment" rows="6"
+              class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+              placeholder="Write a comment..." required></textarea>
+          </div>
+
+          <input type="hidden" name="slug" value="{{blog.slug}}" />
+          <input type="hidden" name="parent" value="{{comment.id}}" />
+          <input type="hidden" name="username" value="{{blog.user.user.username}}" />
+          <button type="submit"
+            class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-green-600 rounded-lg focus:ring-4 focus:ring-green-200 dark:focus:ring-green-900 hover:bg-green-800">
+            Post comment
+          </button>
+        </form>
+
+        <!-- all sub comments-->
+        {% for reply in replies|get:comment.id %}
+        <article id="{{reply.id}}" class="p-6 mb-6 ml-6 lg:ml-12 text-base bg-gray-100 border dark:border-gray-700 rounded-lg dark:bg-gray-900">
+          <footer class="flex justify-between items-center mb-2">
+            <div class="flex items-center">
+              <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
+                <img class="mr-2 w-6 h-6 rounded-full"
+                  src="/media/{{reply.user.profilePic}}" alt="{{reply.user.user.username}}" />{{reply.user.user.username}}
+              </p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                <time pubdate datetime="2022-02-12" title="February 12th, 2022">{{reply.created_at}}</time>
+              </p>
+            </div>
+            <!-- Delete button -->
+            {% if request.user.is_authenticated and request.user.username == reply.user.user.username %}
+            <div class="ml-auto gap-2">
+              <button onclick="deleteComment({{reply.id}})"
+                class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                type="button">
+                <i class="fa-solid fa-trash text-md    dark:text-gray-100  text-gray-600"></i>
+              </button>
+             
+            </div>
+            {% endif %}
+            <!-- Delete button end -->
+          </footer>
+          <p>{{reply.commentBody}}</p>
+          
+        </article>
+          {% endfor %}
+
+        {% endfor %}
+        <!--All Comment End-->
+      </section>
+    </article>
+  </div>
+</section>
+
+<section class="bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-md rounded my-5 md:mx-8 mx-1">
+  <div class="container px-3 md:px-6 py-10 mx-auto">
+      <div class="flex items-center justify-between">
+          <h2 class="text-3xl font-semibold text-gray-800 capitalize lg:text-4xl dark:text-white">More From <a href="{% url 'profile' blog.user.user.username %} " class='text-green-600 underline'>{{blog.user.user.username}}</a></h2>
+      </div>
+
+      <hr class="my-8 border-gray-200 dark:border-gray-700">
+
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+        {% for post in blog.user|similar %}
+        
+          <div>
+              <img class="object-cover object-center w-full aspect-video rounded-lg lg:h-80" src="/media/{{post.image}}" alt="">
+
+              <div class="mt-8">
+                  <span class="text-green-500 uppercase"></span>
+
+                  <h1 class="mt-4 text-xl font-semibold text-gray-800 dark:text-white">
+                      {{ post.title }}
+                  </h1>
+
+                  <p class="mt-2 text-gray-500 dark:text-gray-400">
+                      {{post.description}}
+                  </p>
+
+                  <div class="flex items-center justify-between mt-4">
+                      <div>
+                          <a href="{% url 'profile' post.user.user.username %}" class="text-lg font-medium text-gray-700 dark:text-gray-300 hover:underline hover:text-gray-500">
+                              {{ post.user.user.username }}
+                          </a>
+
+                          <p class="text-sm text-gray-500 dark:text-gray-400">{{post.created_at}}</p>
+                      </div>
+
+                      <a href="{% url 'blog' post.user.user.username post.slug %}" class="inline-block text-green-500 underline hover:text-green-400">Read more</a>
+                  </div>
+
+              </div>
+          </div>
+          {% endfor %}
+          
+      </div>
+  </div>
+</section>
+<!-- subscription -->
+<section class="bg-white dark:text-gray-100 dark:bg-gray-900 border dark:border-gray-700 shadow-md rounded my-5 md:mx-8 mx-1">
+  <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+    <div class="mx-auto max-w-screen-md sm:text-center">
+      <h2 class="mb-4 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
+        Sign up for our newsletter
+      </h2>
+      <p class="mx-auto mb-8 max-w-2xl font-light text-gray-500 md:mb-12 sm:text-xl dark:text-gray-400">
+        Stay up to date with the roadmap progress, announcements and exclusive
+        discounts feel free to sign up with your email.
+      </p>
+      <form action="#">
+        <div class="items-center mx-auto mb-3 space-y-5 max-w-screen-sm sm:flex sm:space-y-0">
+          <div class="relative w-full">
+            <label for="email" class="hidden mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Email
+              address</label>
+            <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+              <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+              </svg>
+            </div>
+            <input
+              class="block p-3 pl-10 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 sm:rounded-none sm:rounded-l-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500 "
+              placeholder="Enter your email" type="email" id="email" required="" />
+          </div>
+          <div>
+            <button type="submit"
+              class="py-3 px-5 w-full 
+text-sm font-medium text-center dark:text-white rounded-lg border cursor-pointer bg-green-700 border-green-600 sm:rounded-none sm:rounded-r-lg hover:bg-green-800 transition-all focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+              Subscribe
+            </button>
+          </div>
+        </div>
+        <div class="mx-auto max-w-screen-sm text-sm text-left text-gray-500 newsletter-form-footer dark:text-gray-300">
+          We care about the protection of your data.
+          <a href="#" class="font-medium text-green-600 dark:text-green-500 hover:underline">Read our Privacy
+            Policy</a>.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock body %}
