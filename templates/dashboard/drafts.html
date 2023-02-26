@@ -1,0 +1,68 @@
+{% extends 'dashboard/base.html' %}
+{% load extras %}
+{% block body %}
+<div class='overflow-x-scroll'>
+<h3 class="text-gray-700 text-3xl m-4 font-medium">Drafts</h3>
+<table class="min-w-full overflow-auto divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blog Title</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">created at</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">updated at</th>
+        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+        {% for post in posts %}
+        
+      <tr class="hover:bg-gray-100 transition duration-150">
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-lg font-medium text-gray-900">{{post.title}}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class=" text-gray-500">{{post.created_at}}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class=" text-gray-500">{{post.updated_at}}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class=" text-gray-500 text-center">{{post.get_status_display}}</div>
+        </td>
+        
+        <td class="px-6 py-4 whitespace-nowrap text-center">
+          <a target='_blank' href="{% url 'update' user.username post.slug %}" class="inline-flex items-center px-3 py-2 border border-transparent  leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <span class="sr-only">Edit</span>
+            <i class="fas fa-pencil-alt"></i>
+          </a>
+          <a target='_blank' href="{% url 'blog' user.username post.slug %}" class="inline-flex items-center px-3 py-2 border border-transparent  leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            <span class="sr-only">View</span>
+            <i class="far fa-eye"></i>
+          </a>
+          <a  href="{% url 'delete' user.username post.slug %}" class="inline-flex items-center px-3 py-2 border border-transparent  leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            <span class="sr-only">Delete</span>
+            <i class="fas fa-trash-alt"></i>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+      <!-- Repeat this table row for each blog post -->
+    </tbody>
+  </table>
+
+    <div class="w-full flex justify-center  gap-4 items-center p-3 m">
+        {% if posts.has_previous %}
+            <a class='btn' href="?page=1"> First</a>
+            <a class='btn'  href="?page={{ posts.previous_page_number }}"><i class="fa-solid fa-chevron-left"></i></a>
+        {% endif %}
+        <span class="current">
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+        </span>
+        {% if posts.has_next %}
+            <a class='btn'  href="?page={{ posts.next_page_number }}"><i class="fa-solid fa-chevron-right"></i></a>
+            <a class='btn' href="?page={{ posts.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </div>
+  </div>
+{% endblock body %}
+

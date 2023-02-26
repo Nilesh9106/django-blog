@@ -1,9 +1,13 @@
 from django.shortcuts import render,redirect
 from home.models import *
 from home.forms import *
+from django.core.paginator import Paginator
 # Create your views here.
 def HomeView(request):
     blogs = Blog.objects.filter(status='2')
+    paginator = Paginator(blogs, 12) 
+    page_number = request.GET.get('page')
+    blogs = paginator.get_page(page_number)
     return render(request,'home/home.html',{"blogs":blogs}) 
 
 def AboutView(request):
@@ -38,9 +42,3 @@ def profileView(request,user):
     comments=Comment.objects.filter(user=profile).count()
     subscribers= Subscriber.objects.filter(user=profile).count()
     return render(request,'home/profile.html',{'profile':profile,'form':form,'blogs':blogs,'comments':comments,'subscribers':subscribers})
-
-def dasshbordView(request):
-    if request.user.is_authenticated == False:
-        return redirect('home')
-
-    return render(request,'home/dashboard.html')

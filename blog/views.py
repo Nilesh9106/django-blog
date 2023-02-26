@@ -2,7 +2,7 @@ import json
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
-from home.models import Blog,Comment,UserProfile
+from home.models import *
 from .forms import PostForm
 from django.contrib import messages
 # Create your views here.
@@ -145,3 +145,24 @@ def draftBlogView(request):
     blogs = Blog.objects.filter(user=profile,status='1')
 
     return render(request,'blog/drafts.html',{"blogs":blogs})
+
+
+
+def subscribeView(request):
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        username = request.POST.get('username')
+        user = User.objects.filter(username=username).first()
+        profile = UserProfile.objects.filter(user=user).first()
+        if Subscriber.objects.filter(email=email,user=profile).exists():
+            messages.warning(request,f"you already subscribed {username}")
+            return redirect('home')
+        subs = Subscriber(email=email,user=profile)
+        subs.save()
+        messages.success(request,f"you subscribed {username} successfully")
+        return redirect('home')
+    
+    return render(request,'404.html')
+

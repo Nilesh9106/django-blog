@@ -15,3 +15,8 @@ def similar(user):
 def getprofile(user):
     profile = UserProfile.objects.filter(user=user).first()
     return profile.profilePic
+
+@register.filter(name='getcommentsCount')
+def getcommentsCount(blog):
+    comments = Comment.objects.filter(post=blog).count()
+    return comments
