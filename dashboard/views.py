@@ -6,9 +6,8 @@ from home.models import *
 # Create your views here.
 @login_required
 def dashboardView(request):
-    
     profile = UserProfile.objects.filter(user=request.user).first()
-    posts = Blog.objects.filter(user=profile,status='2')
+    posts = Blog.objects.filter(user=profile,status='2').order_by('-updated_at')
     subscribers = Subscriber.objects.filter(user=profile)
     count= posts.count()
     
@@ -20,7 +19,7 @@ def dashboardView(request):
 @login_required
 def draftsView(request):
     profile = UserProfile.objects.filter(user=request.user).first()
-    posts = Blog.objects.filter(user=profile,status='1')
+    posts = Blog.objects.filter(user=profile,status='1').order_by('-created_at')
     paginator = Paginator(posts, 10) 
     page_number = request.GET.get('page')
     posts = paginator.get_page(page_number)
@@ -29,7 +28,7 @@ def draftsView(request):
 @login_required
 def subscribersView(request):
     profile = UserProfile.objects.filter(user=request.user).first()
-    subscribers = Subscriber.objects.filter(user=profile)
+    subscribers = Subscriber.objects.filter(user=profile).order_by('-created_at')
     paginator = Paginator(subscribers, 10) 
     page_number = request.GET.get('page')
     subscribers = paginator.get_page(page_number)

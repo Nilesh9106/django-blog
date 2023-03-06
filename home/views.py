@@ -4,7 +4,7 @@ from home.forms import *
 from django.core.paginator import Paginator
 # Create your views here.
 def HomeView(request):
-    blogs = Blog.objects.filter(status='2')
+    blogs = Blog.objects.filter(status='2').order_by('-created_at')
     paginator = Paginator(blogs, 12) 
     page_number = request.GET.get('page')
     blogs = paginator.get_page(page_number)

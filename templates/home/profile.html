@@ -17,17 +17,17 @@ textarea{
                     <p class="text-gray-400 dark:text-gray-200">Blogs</p>
                 </div>
                 <div>
-                    <p class="font-bold text-gray-700 dark:text-gray-100 text-xl">{{comments}}</p>
+                    <p class="font-bold text-gray-700 dark:text-gray-100 text-xl">{{subscribers  }}</p>
                     <p class="text-gray-400 dark:text-gray-200">Subscribers</p>
                 </div>
                 <div>
-                    <p class="font-bold text-gray-700 dark:text-gray-100 text-xl">{{subscribers}}</p>
+                    <p class="font-bold text-gray-700 dark:text-gray-100 text-xl">{{comments}}</p>
                     <p class="text-gray-400 dark:text-gray-200">Comments</p>
                 </div>
             </div>
             <div class="relative">
                 <div class="w-48 h-48 bg-green-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-green-500">
-                    <img src="/media/{{profile.profilePic}}" alt="{{profile.user.username}}" class='rounded-full'>    
+                    <img src="/media/{{profile.profilePic}}" alt="{{profile.user.username}}" class='w-48 h-48 object-cover rounded-full'>    
                 </div>
             </div>
             <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center"><button

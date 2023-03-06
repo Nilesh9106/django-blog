@@ -5,10 +5,41 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}{% endblock title %}</title>
+  <link rel="apple-touch-icon" sizes="57x57" href="{% static 'icon/apple-icon-57x57.png'%}">
+  <link rel="apple-touch-icon" sizes="60x60" href="{% static 'icon/apple-icon-60x60.png'%}">
+  <link rel="apple-touch-icon" sizes="72x72" href="{% static 'icon/apple-icon-72x72.png'%}">
+  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'icon/apple-icon-76x76.png'%}">
+  <link rel="apple-touch-icon" sizes="114x114" href="{% static 'icon/apple-icon-114x114.png'%}">
+  <link rel="apple-touch-icon" sizes="120x120" href="{% static 'icon/apple-icon-120x120.png'%}">
+  <link rel="apple-touch-icon" sizes="144x144" href="{% static 'icon/apple-icon-144x144.png'%}">
+  <link rel="apple-touch-icon" sizes="152x152" href="{% static 'icon/apple-icon-152x152.png'%}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'icon/apple-icon-180x180.png'%}">
+  <link rel="icon" type="image/png" sizes="192x192"  href="{% static 'icon/android-icon-192x192.png'%}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'icon/favicon-32x32.png'%}">
+  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'icon/favicon-96x96.png'%}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'icon/favicon-16x16.png'%}">
+  <link rel="manifest" href="{% static 'icon/manifest.json'%}">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="{% static 'icon/ms-icon-144x144.png'%}">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="title" content="Be a Blogger">
+  <meta name="description" content="Welcome to our blog application, where you can explore a world of diverse perspectives and insightful commentary on a wide range of topics. Our platform is dedicated to providing a space for writers and readers alike to engage in meaningful conversations and exchange ideas.">
+  <meta name="author" content="Nilesh darji">
+  <meta name="keywords" content="blogger, blog, article, be a blogger">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.beablogger.com/">
+  <meta property="og:title" content="Be a Blogger">
+  <meta property="og:description" content="Welcome to our blog application, where you can explore a world of diverse perspectives and insightful commentary on a wide range of topics. Our platform is dedicated to providing a space for writers and readers alike to engage in meaningful conversations and exchange ideas.">
+  <meta property="og:image" content="{% static 'default.png' %}">
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://www.beablogger.com/">
+  <meta property="twitter:title" content="Be a Blogger">
+  <meta property="twitter:description" content="Welcome to our blog application, where you can explore a world of diverse perspectives and insightful commentary on a wide range of topics. Our platform is dedicated to providing a space for writers and readers alike to engage in meaningful conversations and exchange ideas.">
+  <meta property="twitter:image" content="{% static 'default.png' %}">
+  <meta name="robots" content="index, follow">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> 
   <style type="text/tailwindcss">
     @layer utilities {
@@ -47,14 +78,10 @@
       {% block style %}{% endblock style %}
     }
   </style>
-  
   <link rel="stylesheet" href="{% static 'css/prism.css' %}">
   <script src="{% static 'js/prism.js' %}"></script>
   {% load extras %}
-
   {% block head %}{% endblock head %}
-
-
 </head>
 
 <body class='dark:bg-[#030303] dark:text-gray-50 transition-all'>
@@ -65,7 +92,8 @@
         <i class="fa-solid md:text-3xl text-xl  fa-bars p-2"></i>
       </button>
       <a href='{% url 'home' %}' class="flex title-font font-medium items-center text-gray-900">
-        <img src="{% static 'logo1.png' %}" class="md:h-10 dark:invert h-7 rounded-full" alt="Be a Blogger" /> <span class='mx-2 dark:text-white md:text-xl text-lg'>Be a Blogger</span>
+        <img src="{% static 'cover.png' %}" class="md:h-16 dark:invert h-10 object-contain " alt="Be a Blogger" />
+        
       </a>
 
       <nav
@@ -90,7 +118,7 @@
         
         <button id="drop-btn" type="button"
           class=" p-2 rounded-full h-10 w-10 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600  transition-all ">
-          <img src="{% if user.is_authenticated %}/media/{{request.user|getprofile}}{% else %}/media/profile/default1.png{% endif %}" class="  rounded-full text-xl  dark:text-gray-100  text-gray-600  "/>
+          <img src="{% if user.is_authenticated %}/media/{{request.user|getprofile}}{% else %}/media/profile/default1.png{% endif %}" class="aspect-square    rounded-full text-xl  dark:text-gray-100  text-gray-600  "/>
         </button>
       </div>
       <div class="relative">
@@ -231,7 +259,7 @@
     <div class="container px-5 py-4 mx-auto flex items-center sm:flex-row flex-col">
       <a
         class="flex title-font font-medium items-center md:justify-start justify-center dark:text-gray-100 text-gray-900">
-        <img src="{% static 'logo1.png' %}" class="w-16 h-16 p-3 rounded-full" alt="" />
+        <img src="{% static 'logo.png' %}" class="w-20 h-20 p-3 dark:invert rounded-full" alt="" />
         <span class="ml-1 text-xl">Be a Blogger</span>
       </a>
       <p

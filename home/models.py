@@ -55,6 +55,7 @@ class Blog(models.Model):
 class Subscriber(models.Model):
     user=models.ForeignKey(UserProfile,on_delete=models.CASCADE)
     email=models.EmailField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.email + " | " + self.user.user.username
