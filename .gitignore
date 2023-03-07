@@ -3,6 +3,7 @@ env
 .vscode
 __pycache__
 *.py[cod]
+.vscode
 
 media/blog/*
 !media/blog/default.png

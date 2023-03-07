@@ -8,6 +8,10 @@ choice = [
     ('1', 'Draft'),
     ('2', 'Published'),
 ]
+SUBSCRIBER_STATUS = [
+    ('1', 'unverified'),
+    ('2', 'verified'),
+]
 class UserProfile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     profilePic= models.ImageField(upload_to='profile/',default='profile/default1.png')
@@ -20,10 +24,10 @@ class UserProfile(models.Model):
         return self.user.username
     
     def delete(self,*args,**kwargs):
-        if os.path.isfile(self.profilePic.path) and self.profilePic.name is not 'profile/default1.png':
+        if os.path.isfile(self.profilePic.path) and self.profilePic.name != 'profile/default1.png':
             os.remove(self.profilePic.path)
         
-        if os.path.isfile(self.siteImage.path) and self.siteImage.name is not 'site/default.png':
+        if os.path.isfile(self.siteImage.path) and self.siteImage.name != 'site/default.png':
             os.remove(self.siteImage.path)
 
         super(UserProfile, self).delete(*args,**kwargs)
@@ -34,7 +38,7 @@ class Blog(models.Model):
     slug = models.CharField(null=False,blank=False,max_length=255)
     title = models.CharField(max_length=150,blank=False,null=False)
     description = models.CharField(max_length=250,blank=True)
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
     image = models.ImageField(upload_to='blog/',default='blog/default.png')
     body = HTMLField()
     status= models.CharField(choices=choice,default='1',max_length=20)
@@ -46,7 +50,7 @@ class Blog(models.Model):
         unique_together = ('user', 'slug',)
     
     def delete(self,*args,**kwargs):
-        if os.path.isfile(self.image.path) and self.image.name is not 'blog/default.png':
+        if os.path.isfile(self.image.path) and self.image.name != 'blog/default.png':
             os.remove(self.image.path)
         super(Blog, self).delete(*args,**kwargs)
 
@@ -56,6 +60,7 @@ class Subscriber(models.Model):
     user=models.ForeignKey(UserProfile,on_delete=models.CASCADE)
     email=models.EmailField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    status=models.CharField(max_length=1,default='1',choices=SUBSCRIBER_STATUS)
 
     def __str__(self):
         return self.email + " | " + self.user.user.username

@@ -122,3 +122,13 @@ function deleteComment(id) {
       document.getElementById(id).remove();
     });
 }
+
+
+ 
+
+const showAlert = (user,slug) => { 
+  let b = confirm('are you sure to delete this blog??')
+  if(b){
+    window.location.href=`/blog/${user}/${slug}/delete`
+  }
+}
