@@ -44,6 +44,9 @@ class Blog(models.Model):
     status= models.CharField(choices=choice,default='1',max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # likes = models.ManyToManyField(User, related_name='blogs_likes')
+    # def number_of_likes(self):
+    #     return self.likes.count()
     def __str__(self):
         return self.title
     class Meta:

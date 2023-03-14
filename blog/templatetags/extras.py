@@ -20,3 +20,10 @@ def getprofile(user):
 def getcommentsCount(blog):
     comments = Comment.objects.filter(post=blog).count()
     return comments
+
+# @register.filter(name='post_is_liked')
+# def postLiked(blog,user):
+#     user= User.objects.filter(username=user)
+#     user= UserProfile.objects.filter(user=user)
+    
+#     return blog.likes.filter(user=user).exists()

@@ -3,8 +3,10 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from home.models import *
-from .forms import PostForm
+from .forms import *
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
+
 # Create your views here.
 
 def CreateView(request):
@@ -73,11 +75,20 @@ def subsiteBlog(request,user,slug):
     if User.objects.filter(username=user).exists():
         site1 = User.objects.filter(username=user).first()
         site = UserProfile.objects.filter(user=site1).first()
+        
+        
+        
 
+    
         if Blog.objects.filter(user=site,slug=slug).exists():
             blog = Blog.objects.filter(user=site,slug=slug)[0]
             if blog.status == '1' and request.user != site1:
                 return render(request,'404.html')
+            if request.method == 'POST':
+                reportReason = request.POST.get('report')
+                report = Report(blog=blog,report=reportReason)
+                report.save()
+                
             tags = blog.tags.names()
             body = blog.body
             comments = Comment.objects.filter(post=blog,parent=None).order_by('created_at')
@@ -104,6 +115,7 @@ def CommentView(request):
     if request.method == 'POST':
         slug = request.POST.get('slug')
         username = request.POST.get('username')
+        
         if request.user.is_authenticated:
             commentBody = request.POST.get('comment')
             user = User.objects.filter(username=username).first()
@@ -165,4 +177,19 @@ def subscribeView(request):
         return redirect('home')
     
     return render(request,'404.html')
+
+# def BlogPostLike(request):
+#     post = get_object_or_404(Post, id=request.POST.get('slug'))
+#     post.likes.add(request.user)
+
+#     return JsonResponse({"msg":"success"})
+
+
+# def BlogPostUnlike(request):
+#     post = get_object_or_404(Post, id=request.POST.get('slug'))
+#     post.likes.remove(request.user)
+    
+#     return JsonResponse({"msg":"success"})
+
+
 

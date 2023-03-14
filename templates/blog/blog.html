@@ -2,7 +2,22 @@
 {% load extras %}
 {% block title %}{{blog.title}}{% endblock title %}
 
+{% block style %}
+textarea{
+  @apply w-full bg-white rounded-md file:border-none border-2  my-2  dark:text-gray-200 dark:bg-gray-600 dark:focus:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 file:py-1 file:px-3 leading-8 transition-colors duration-200 ease-in-out
+  }
+{% endblock style %}
+
 {% block body %}
+
+<script>
+  const showModal= ()=>{
+    const modal = document.getElementById("defaultModal");
+    modal.classList.toggle("hidden")
+  }
+  
+  
+</script>
 
 <!-- main content  -->
 <article class="md:px-4 px-1 md:py-16 py-7 mx-auto max-w-7xl"  itemtype="http://schema.org/BlogPosting">
@@ -12,16 +27,19 @@
         <h1 class="my-3 text-3xl font-bold leading-tight dark:text-gray-200 text-gray-900 md:text-4xl" itemprop="headline" title="{{ blog.title }}">
           {{ blog.title }}
         </h1>
-        {% if user.username == blog.user.user.username %}
         <div class='flex  items-center justify-center'>
-          <a href="{% url 'update' user.username blog.slug %}" class="inline-flex items-center mx-3 p-2 text-sm font-medium text-center text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button">
+          {% if user.username == blog.user.user.username %}
+          <a href="{% url 'update' user.username blog.slug %}" class="inline-flex items-center justify-center  h-10 w-10  ml-3 p-2 text-sm font-medium text-center text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button">
                 <i class="fa-solid fa-edit text-lg dark:text-gray-100  text-gray-600"></i>
           </a>
-          <button onClick="showAlert('{{user.username}}','{{blog.slug}}')" class="inline-flex items-center mx-3 p-2 text-sm font-medium text-center text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button">
+          <button onClick="showAlert('{{user.username}}','{{blog.slug}}')" class="inline-flex items-center justify-center  h-10 w-10  ml-3 p-2 text-sm font-medium text-center text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button">
                 <i class="fa-solid fa-trash text-lg dark:text-gray-100  text-gray-600"></i>
           </button>
+          {% endif %}
+          <button data-modal-target="defaultModal" onClick="showModal()" data-modal-toggle="defaultModal"  class="flex items-center justify-center  h-10 w-10  ml-3 p-2 text-sm font-medium text-center text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button">
+            <i class="fa-solid fa-flag text-lg dark:text-gray-100  aspect-square text-gray-600"></i>
+          </button>
         </div>
-        {% endif %}
       </div>
       <div class="flex mb-6 space-x-2">
         {% for tag in tags %}
@@ -38,6 +56,19 @@
           </p>
           <p class="text-sm dark:text-gray-300 text-gray-500">{{ blog.created_at }}</p>
         </div>
+        
+          
+          {% comment %} {% if blog|post_is_liked:request.user.username   %}
+          <button type="submit" id='unlike' onclick="unLike({{blog.slug}},{{blog.user.user.username}})"> 
+            <i class="fa-sharp fa-solid fa-heart text-lg text-red-600"></i>
+          </button>
+          {% else %}
+
+          <button type="submit" id='like' onclick="Like({{blog.slug}},{{blog.user.user.username}})"> 
+            <i class="fa-sharp fa-regular fa-heart text-lg"></i>
+          </button>
+          
+          {% endif %} {% endcomment %}
       </a>
       
     </div>
@@ -47,6 +78,42 @@
       {{ body | safe }}
     </div>
 </article>
+
+
+
+
+<!-- Main modal -->
+<div id="defaultModal" tabindex="-1" aria-hidden="false" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+    <div class="relative w-full h-full my-10 max-w-2xl mx-auto md:h-auto">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Terms of Service
+                </h3>
+                <button type="button" onclick="showModal()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="defaultModal">
+                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form action="" method="post">
+              {% csrf_token %}
+                <div class="p-6 space-y-6">
+                  <textarea name="report" id="report" cols="30" rows="10" placeholder='report Reason'></textarea>
+                  
+                </div>
+                <!-- Modal footer -->
+                <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                  <button  type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Report</button>
+                  <button onclick="showModal()" data-modal-hide="defaultModal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Decline</button>
+                </div>
+              </form>
+          </div>
+    </div>
+</div>
+
 
 <!-- comment  -->
 <section class="pt-8 pb-16 lg:pt-16 lg:pb-24 my-5 rounded md:mx-8 mx-1 border dark:border-gray-700 shadow-md bg-white dark:bg-gray-900">

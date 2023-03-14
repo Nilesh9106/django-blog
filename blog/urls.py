@@ -10,4 +10,6 @@ urlpatterns = [
     path('<str:user>/<str:slug>/',views.subsiteBlog,name='blog'),
     path('<str:user>/<str:slug>/update/',views.UpdateView,name='update'),
     path('<str:user>/<str:slug>/delete/',views.DeleteView,name='delete'),
+    # path('blog_like/',views.BlogPostLike,name="blog_like"),
+    # path('blog_unlike/',views.BlogPostUnlike,name="blog_unlike")
 ]
