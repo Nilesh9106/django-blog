@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login,logout,authenticate
 from home.models import *
+from verify_email.email_handler import send_verification_email
+from django.core.mail import EmailMessage
+from django.conf import settings
 # Create your views here.
 
 def loginView(request):
@@ -35,12 +38,15 @@ def signupView(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
+            
             user = form.save()
             user.refresh_from_db()  
             # load the profile instance created by the signal
             profile = UserProfile(user=user,siteTitle=(user.first_name+"'s Blog"))
             profile.save()
             user.save()
+            inactive_user = send_verification_email(request, form)
+
             messages.success(request,'your account created successfully. login to your account')
             return redirect('login')
     

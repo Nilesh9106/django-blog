@@ -38,6 +38,7 @@ def CreateView(request):
                         .header {
                             text-align: center;
                             margin-bottom: 30px;
+                            font-size: 25px;
                         }
                         .title {
                             font-size: 28px;
@@ -67,7 +68,7 @@ def CreateView(request):
                         {head}
                     <body>
                         <div class="header">
-                        <img src="{settings.DOMAIN}logo.png" alt="Your Blog Logo">
+                        Be A Blogger
                         </div>
                         <div class="content">
                         <h1 class="title">New Blog Post Notification</h1>
@@ -97,7 +98,7 @@ def CreateView(request):
 
     form = PostForm()
     return render(request,'blog/create.html',{'form':form})
-    
+
 
 def UpdateView(request,user,slug):
     user = User.objects.filter(username=user).first()

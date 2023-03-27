@@ -30,11 +30,10 @@ textarea{
                     <img src="/media/{{profile.profilePic}}" alt="{{profile.user.username}}" class='w-48 h-48 object-cover rounded-full'>    
                 </div>
             </div>
-            <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center"><button
-                    class="text-white py-2 px-4 uppercase rounded bg-green-500 hover:bg-green-600 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
-                    Connect</button> <button
-                    class="text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
-                    Message</button> </div>
+            <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
+                <a href="{% url 'site' profile.user.username %}" class="text-white py-2 px-4 flex justify-center items-center uppercase rounded bg-green-500 hover:bg-green-600 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">Check Website</a> 
+                {% comment %} <button class="text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">Message</button>  {% endcomment %}
+            </div>
         </div>
         <div class="mt-20 border-b pb-12">
             {% if user.username == profile.user.username %}

@@ -10,4 +10,5 @@ urlpatterns = [
     path('blog/', include("blog.urls")),
     path('dashboard/', include("dashboard.urls")),
     path('tag/', include("tag.urls")),
+    path('verification/', include('verify_email.urls')),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

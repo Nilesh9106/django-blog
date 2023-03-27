@@ -12,6 +12,15 @@ SUBSCRIBER_STATUS = [
     ('1', 'unverified'),
     ('2', 'verified'),
 ]
+
+class Contact(models.Model):
+    email=models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
+    message = models.TextField()
+
+    def __str__(self):
+        return self.name
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     profilePic= models.ImageField(upload_to='profile/',default='profile/default1.png')
@@ -44,9 +53,6 @@ class Blog(models.Model):
     status= models.CharField(choices=choice,default='1',max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # likes = models.ManyToManyField(User, related_name='blogs_likes')
-    # def number_of_likes(self):
-    #     return self.likes.count()
     def __str__(self):
         return self.title
     class Meta:

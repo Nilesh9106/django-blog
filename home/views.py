@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from home.models import *
 from home.forms import *
 from django.core.paginator import Paginator
+from django.contrib import messages
 # Create your views here.
 def HomeView(request):
     blogs = Blog.objects.filter(status='2').order_by('-created_at')
@@ -15,6 +16,14 @@ def AboutView(request):
     return render(request,'home/about.html')
 
 def ContactView(request):
+    
+    if request.method == "POST":
+        email = request.POST.get('email')
+        name = request.POST.get('name')
+        message = request.POST.get('message')
+        contact = Contact(email=email,name=name,message=message)
+        contact.save()
+        messages.success(request,"Message Sent successfully !!")
     
     return render(request,'home/contact.html')
 
