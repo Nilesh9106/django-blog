@@ -3,7 +3,7 @@ from .forms import SignupForm,LoginForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login,logout,authenticate
-from home.models import UserProfile
+from home.models import *
 # Create your views here.
 
 def loginView(request):
@@ -51,3 +51,32 @@ def LogoutView(request):
     messages.success(request,'you logout successfully')
     logout(request)
     return redirect('home')
+
+def Subscribe(request):
+    if request.GET.get("email"):
+        email = request.GET.get("email")
+        user = request.GET.get("user")
+        code = request.GET.get("code")
+        user = User.objects.filter(username=user).first()
+        user = UserProfile.objects.filter(user=user).first()
+        # print(1)
+        if email is None or user is None or code is None:
+            return render(request, '404.html')
+        
+        if Subscriber.objects.filter(email=email,user=user).exists() and Subscriber.objects.filter(email=email,user=user).first().status == '2':
+            # print(2)
+            messages.error(request,f"{email} is already verified")
+            return redirect("home")
+        elif Subscriber.objects.filter(email=email,user=user).exists():
+            sub = Subscriber.objects.filter(email=email,user=user).first()
+            if sub.code == code:
+                sub.status = '2'
+                sub.save()
+                messages.success(request,f"you subscribed to {user.user.username} successfully")
+            else:
+                messages.error(request,f"Wrong URL Provided")
+            return redirect("home")
+        else:
+            messages.error(request,f"{email} is not subscribed to {user.user.username} ")
+            return redirect("home")
+           

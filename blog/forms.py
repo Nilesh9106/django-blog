@@ -9,8 +9,3 @@ class PostForm(forms.ModelForm):
         model = Blog
         fields = ["slug", "title", "description", "tags",'status',"image","body"]
 
-class ReportForm(forms.ModelForm):
-
-    class Meta:
-        model=Report
-        fields=['report']

@@ -64,7 +64,9 @@ class Subscriber(models.Model):
     email=models.EmailField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     status=models.CharField(max_length=1,default='1',choices=SUBSCRIBER_STATUS)
-
+    code = models.CharField(max_length=32,null=True)
+    class Meta:
+        unique_together = ('user', 'email',)
     def __str__(self):
         return self.email + " | " + self.user.user.username
 
@@ -72,6 +74,10 @@ class Report(models.Model):
     blog = models.ForeignKey(Blog,on_delete=models.CASCADE)
     report = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.blog.title
+    
 
 class Comment(models.Model):
     user = models.ForeignKey(UserProfile,on_delete=models.CASCADE)

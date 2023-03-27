@@ -6,7 +6,9 @@ from home.models import *
 from .forms import *
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
-
+from django.conf import settings
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail,EmailMessage
 # Create your views here.
 
 def CreateView(request):
@@ -18,6 +20,77 @@ def CreateView(request):
             post.user = UserProfile.objects.filter(user=request.user).first()
             slug=slug.strip().lower()
             post.slug=slug.replace(" ","-")
+            
+            if post.status == '2':
+                subject = 'New Blog Post'
+                head = '''
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>New Blog Post Notification</title>
+                        <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            font-size: 16px;
+                            line-height: 1.5;
+                            background-color: #f9f9f9;
+                            padding: 20px;
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 30px;
+                        }
+                        .title {
+                            font-size: 28px;
+                            margin-bottom: 20px;
+                        }
+                        .content {
+                            background-color: #fff;
+                            border: 1px solid #ccc;
+                            border-radius: 5px;
+                            padding: 20px;
+                            margin-bottom: 30px;
+                        }
+                        .button {
+                            display: inline-block;
+                            background-color: #4CAF50;
+                            color: #fff;
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            text-decoration: none;
+                            margin-top: 20px;
+                        }
+                        </style>
+                    </head>
+                '''
+                message = f'''
+                    <html>
+                        {head}
+                    <body>
+                        <div class="header">
+                        <img src="{settings.DOMAIN}logo.png" alt="Your Blog Logo">
+                        </div>
+                        <div class="content">
+                        <h1 class="title">New Blog Post Notification</h1>
+                        <p>Dear Subscriber,</p>
+                        <p>We are pleased to announce that a new blog post has been uploaded to our website. The post is titled "{post.title}" and you can read it by clicking on the button below:</p>
+                        <a href="{settings.DOMAIN}blog/{request.user.username}/{slug}/" class="button">Read Now</a>
+                        <p>Thank you for your continued support and we hope you enjoy reading our latest post.</p>
+                        <p>Sincerely,</p>
+                        <p>Be a Blogger Team</p>
+                        </div>
+                    </body>
+                    </html>
+                '''
+                email_from = settings.EMAIL_HOST_USER
+                subscribers = Subscriber.objects.filter(user=post.user,status='2')
+
+                recipient_list = []
+                for sub in subscribers:
+                    recipient_list.append(sub.email)
+
+                msg = EmailMessage(subject, message, email_from, recipient_list)
+                msg.content_subtype = "html"  # Main content is now text/html
+                msg.send()
             post.save()
             form.save_m2m()
             return redirect('/blog/'+request.user.username+'/'+post.slug)
@@ -171,9 +244,27 @@ def subscribeView(request):
         if Subscriber.objects.filter(email=email,user=profile).exists():
             messages.warning(request,f"you already subscribed {username}")
             return redirect('home')
-        subs = Subscriber(email=email,user=profile)
+        
+        code = get_random_string(length=32)
+
+        subject = 'Subscription Verification'
+        message = f'''<p>Dear {email},</p>
+    <p>Thank you for subscribing to our newsletter! To ensure that you receive our emails, please click the button below to verify your subscription:</p>
+    <a href="{settings.DOMAIN}/auth/subscribe?email={email}&user={username}&code={code}" style="background-color: #008CBA; color: white; display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Verify Subscription</a>
+    <p>If you did not sign up for our newsletter, please disregard this email.</p>
+    <p>Thank you,</p>
+    <p>Be a Blogger Team</p>
+'''
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [email ]
+
+        msg = EmailMessage(subject, message, email_from, recipient_list)
+        msg.content_subtype = "html"  # Main content is now text/html
+        msg.send()
+        subs = Subscriber(email=email,user=profile,code=code)
         subs.save()
-        messages.success(request,f"you subscribed {username} successfully")
+        
+        messages.success(request,f"we have sent mail to {email}, please verify your subscription ")
         return redirect('home')
     
     return render(request,'404.html')
