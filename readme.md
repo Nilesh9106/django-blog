@@ -1,4 +1,8 @@
 # Django Blog Application
+
+### Preview of Website 
+
+#### http://beablogger.pythonanywhere.com/
 ## for installing follow below steps
 1. create virtual environment
 ```bash
